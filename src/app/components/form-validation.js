@@ -1,31 +1,35 @@
-import isEmail from 'is-email';
+/**
+ * rules:
+ *
+ * email: /.+\@.+\..+/
+ * number: /^\d+$/
+ */
 
 const formValidation = (container) => {
     const form = container;
-    const inputsToValidate = Array.from(form.querySelectorAll('[data-validation]'));
-    const requiredInputs = Array.from(form.querySelectorAll('[data-validation-required]'));
+    const inputsToValidate = Array.from(form.querySelectorAll('[data-validation-format]'));
+
+    /* Utils */
+    const isValidClassName = 'is-valid';
+    const hasErrorClassName = 'has-error';
 
     /* State */
-    let isValid = false;
+    let formIsValid = false;
 
     /* Listen for submit */
     form.addEventListener('submit', (event) => {
         console.log('submit');
         event.preventDefault();
 
-        const noEmpty = inputsAreFilled();
-        console.log('noEmpty: ', noEmpty);
+        validateInputs();
 
-        const allValid = inputsAreValid();
-        console.log('allValid: ', allValid);
-
-        if (noEmpty && allValid) {
-            isValid = true;
+        if (formIsValid) {
+            console.log('form valid');
         } else {
-            isValid = false;
+            console.log('form invalid');
         }
 
-        isValid && sendData();
+        // formIsValid && sendData();
     });
 
     /**
@@ -37,48 +41,37 @@ const formValidation = (container) => {
         return true;
     }
 
-    /**
-     * Check if all required inputs are filled in.
-     *
-     * @return {bool}
-     */
-    function inputsAreFilled() {
-        const emptyInputs = requiredInputs.filter((input) => {
-            // TODO: checkbox, input, radio
-            return input.value === '';
-        });
+    function validateInputs() {
+        formIsValid = true;
 
-        return emptyInputs.length === 0;
+        inputsToValidate.forEach((input) => {
+            const inputIsValid = isFormatvalid(input);
+
+            if (inputIsValid) {
+                input.classList.add(isValidClassName);
+                input.classList.remove(hasErrorClassName);
+            } else {
+                input.classList.remove(isValidClassName);
+                input.classList.add(hasErrorClassName);
+            }
+
+            if (!inputIsValid) {
+                formIsValid = false;
+            }
+        });
     }
 
     /**
-     * Check if all inputs have correct valude.
+     * Test input value format. (ie. email)
      *
+     * @param  {HTML element} input
      * @return {bool}
      */
-    function inputsAreValid() {
-        const inputsTotal = inputsToValidate.length;
-        const validInputs = [];
+    function isFormatvalid(input) {
+        const format = new RegExp(input.dataset.validationFormat);
+        const value = input.value;
 
-        const emptyInputs = inputsToValidate.forEach((input) => {
-            const rule = input.dataset.validation;
-            let inputIsValid = false;
-
-            switch (rule) {
-                case 'email':
-                    inputIsValid = isEmail(input.value)
-                    break;
-                case 'number':
-                    inputIsValid = !isNaN(input.value)
-                    break;
-                default:
-                    return true;
-            }
-
-            return inputIsValid;
-        });
-
-        return emptyInputs.length === 0;
+        return format.test(value);
     }
 };
 

@@ -1,17 +1,18 @@
 <form method="post" action="" class="js-form-validation">
     <div class="form-group">
         <label for="exampleInputEmail1">Email address</label>
-        <input type="text" class="form-control" id="exampleInputEmail1" data-validation-required data-validation="email" aria-describedby="emailHelp" placeholder="Enter email">
+        <input type="text" class="form-control" id="exampleInputEmail1"
+        data-validation-format=".+\@.+\..+" data-validation-message-format-invalid="Incorrect format" aria-describedby="emailHelp" placeholder="Enter email">
         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
     </div>
     <div class="form-group">
         <label for="exampleInputNumber">Number</label>
-        <input type="text" class="form-control" id="exampleInputNumber" data-validation-required data-validation="number" placeholder="Enter number (123456)">
+        <input type="text" class="form-control" id="exampleInputNumber" placeholder="Enter number (123456)" data-validation-format="^\d+$" data-validation-message-format-invalid="Incorrect format">
         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
     </div>
     <div class="form-group">
         <label for="exampleInputPassword1">Password</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" data-validation-required placeholder="Password">
+        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
     </div>
     <div class="form-group">
         <label for="exampleSelect1">Example select</label>
