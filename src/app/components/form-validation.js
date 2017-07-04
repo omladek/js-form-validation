@@ -10,8 +10,8 @@ const formValidation = (container) => {
     const inputsToValidate = Array.from(form.querySelectorAll('[data-validation-format]'));
 
     /* Utils */
-    const isValidClassName = 'is-valid';
-    const hasErrorClassName = 'has-error';
+    const hasSuccessClassName = 'has-success';
+    const hasDangerClassName = 'has-danger';
 
     /* State */
     let formIsValid = false;
@@ -45,17 +45,22 @@ const formValidation = (container) => {
         formIsValid = true;
 
         inputsToValidate.forEach((input) => {
-            const inputIsValid = isFormatvalid(input);
+            const formatIsValid = isFormatValid(input);
+            const parentElement = input.parentElement;
+            const feedback = parentElement.querySelector('.form-control-feedback');
+            const formatInvalidMessage = input.dataset.validationMessageFormatInvalid;
 
-            if (inputIsValid) {
-                input.classList.add(isValidClassName);
-                input.classList.remove(hasErrorClassName);
+            if (formatIsValid) {
+                parentElement.classList.add(hasSuccessClassName);
+                parentElement.classList.remove(hasDangerClassName);
+                feedback.innerText = '';
             } else {
-                input.classList.remove(isValidClassName);
-                input.classList.add(hasErrorClassName);
+                parentElement.classList.remove(hasSuccessClassName);
+                parentElement.classList.add(hasDangerClassName);
+                feedback.innerText = formatInvalidMessage;
             }
 
-            if (!inputIsValid) {
+            if (!formatIsValid) {
                 formIsValid = false;
             }
         });
@@ -67,7 +72,7 @@ const formValidation = (container) => {
      * @param  {HTML element} input
      * @return {bool}
      */
-    function isFormatvalid(input) {
+    function isFormatValid(input) {
         const format = new RegExp(input.dataset.validationFormat);
         const value = input.value;
 
