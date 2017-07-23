@@ -32,16 +32,21 @@ const formValidation = (container) => {
     /* Listen for submit */
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-
-        validateAll(inputsToValidate);
-
-        (state.invalidFields.length === 0 && !state.sent) && sendData();
+        !state.sent && handleSubmit();
     });
 
     /* Listen for blur */
     inputsToValidate.forEach((input) => {
         input.addEventListener('blur', event => validate(input));
     });
+
+    /**
+     * Run validation and if passed submit data
+     */
+    function handleSubmit() {
+        validateAll(inputsToValidate);
+        state.invalidFields.length === 0 && sendData();
+    }
 
     /**
      * Send data
@@ -221,7 +226,11 @@ const formValidation = (container) => {
         const feedback = parentElement.querySelector('.form-control-feedback');
 
         /* Update state */
-        state.invalidFields.push(input.name);
+        const index = state.invalidFields.indexOf(input.name);
+
+        if (index === -1) {
+            state.invalidFields.push(input.name);
+        }
 
         /* Update UI */
         parentElement.classList.remove(hasSuccessClassName);
