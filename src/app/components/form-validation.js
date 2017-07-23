@@ -4,12 +4,13 @@
  * email: /.+\@.+\..+/
  * number: /^\d+$/
  * not empty: /^\s*\S.*$/
+ * min and max length: /.{3,7}$/
  *
  * data attributes:
  * data-validation-format=".+\@.+\..+"
  * data-validation-message-format-invalid="Incorrect email format"
  * data-validation-required
- * data-validation-message-required="Filed password is required"
+ * data-validation-message-required="Password is required"
  */
 
 const formValidation = (container) => {
@@ -80,13 +81,6 @@ const formValidation = (container) => {
 
         /* TODO: rewrite without disabling eslint rule */
         /* eslint-disable consistent-return */
-        /* Get value format rule (regular expression taken from data-attribute */
-        if (input.dataset.validationFormat) {
-            const rule = new RegExp(input.dataset.validationFormat);
-            isValid = isValidInput(input, rule);
-            message = input.dataset.validationMessageFormatInvalid;
-        }
-
         /* Check if input is required without explicit rule of value format */
         if (input.dataset.validationRequired) {
             switch (input.type) {
@@ -110,6 +104,13 @@ const formValidation = (container) => {
             }
 
             message = input.dataset.validationMessageRequired;
+        }
+
+        /* Check if input value format is correct (regular expression taken from data-attribute */
+        if (input.dataset.validationFormat) {
+            const rule = new RegExp(input.dataset.validationFormat);
+            isValid = isValidInput(input, rule);
+            message = input.dataset.validationMessageFormatInvalid;
         }
 
         return {

@@ -18,6 +18,11 @@
         <div class="form-control-feedback"></div>
     </div>
     <div class="form-group">
+        <label class="form-control-label" for="exampleMinMax">Validate min length of 3 and max 7</label>
+        <input type="text" class="form-control" id="exampleMinMax" aria-describedby="emailHelp" placeholder="Min 3 chars and max 7 chars" data-validation-format="^.{3,7}$" data-validation-message-format-invalid="Min 3 max 7" data-validation-required="true" data-validation-message-required="Value is required">
+        <div class="form-control-feedback"></div>
+    </div>
+    <div class="form-group">
         <label class="form-control-label" for="exampleSelect1">Example select</label>
         <select class="form-control" id="exampleSelect1" data-validation-required="true" data-validation-message-required="Select a a value">
             <option>Select something</option>
