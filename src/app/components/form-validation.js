@@ -55,18 +55,17 @@ const formValidation = (container) => {
      */
     function validate(input) {
         formIsValid = true;
-        const validation = getValidationRuleAndMessage(input);
-        const inputIsValid = isValid(input, validation.rule);
+        const validation = handleValidation(input);
 
         /* Show/hide validation message */
-        if (inputIsValid) {
+        if (validation.isValid) {
             handleValid(input);
         } else {
             handleInvalid(input, validation.message);
         }
 
         /* Update form state */
-        if (!inputIsValid) {
+        if (!validation.isValid) {
             formIsValid = false;
         }
     }
@@ -75,15 +74,16 @@ const formValidation = (container) => {
      * @param  {HTML element} input
      * @return {object}
      */
-    function getValidationRuleAndMessage(input) {
-        let rule;
+    function handleValidation(input) {
+        let isValid = false;
         let message;
 
         /* TODO: rewrite without disabling eslint rule */
         /* eslint-disable consistent-return */
         /* Get value format rule (regular expression taken from data-attribute */
         if (input.dataset.validationFormat) {
-            rule = new RegExp(input.dataset.validationFormat);
+            const rule = new RegExp(input.dataset.validationFormat);
+            isValid = isValidInput(input, rule);
             message = input.dataset.validationMessageFormatInvalid;
         }
 
@@ -94,13 +94,16 @@ const formValidation = (container) => {
                 case 'number':
                 case 'password':
                 case 'textarea':
-                    rule = /^\s*\S.*$/;
+                    isValid = isValidInput(input, /^\s*\S.*$/);
                     break;
                 case 'checkbox':
-                    rule = /^\s*\S.*$/;
+                    isValid = isValidInput(input, /^\s*\S.*$/);
                     break;
                 case 'radio':
-                    rule = /^\s*\S.*$/;
+                    isValid = isValidInput(input, /^\s*\S.*$/);
+                    break;
+                case 'select-one':
+                    isValid = isValidSelect(input);
                     break;
                 default:
                     return;
@@ -110,10 +113,19 @@ const formValidation = (container) => {
         }
 
         return {
-            rule,
+            isValid,
             message
         };
         /* eslint-enable consistent-return */
+    }
+
+    /**
+     * Don't allow empty value of select element
+     * @param  {HTML element}  input
+     * @return {Boolean}
+     */
+    function isValidSelect(input) {
+        return input[input.selectedIndex].getAttribute('value');
     }
 
     /**
@@ -148,7 +160,7 @@ const formValidation = (container) => {
      * @param  {regular expression} rule
      * @return {bool}
      */
-    function isValid(input, rule) {
+    function isValidInput(input, rule) {
         return rule.test(input.value);
     }
 };
