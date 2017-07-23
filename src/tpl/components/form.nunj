@@ -36,7 +36,8 @@
     </div>
     <div class="form-group">
         <label class="form-control-label" for="exampleTextarea">Example textarea</label>
-        <textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
+        <textarea class="form-control" id="exampleTextarea" rows="3" data-validation-required="true" data-validation-message-required="Cannot be empty"></textarea>
+        <div class="form-control-feedback"></div>
     </div>
     <div class="form-group">
         <div class="form-check">
