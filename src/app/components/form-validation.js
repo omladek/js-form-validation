@@ -18,18 +18,16 @@ const formValidation = (container) => {
 
     /* Listen for submit */
     form.addEventListener('submit', (event) => {
-        console.log('submit');
         event.preventDefault();
 
-        validateInputs();
+        validateInputs(inputsToValidate);
 
-        if (formIsValid) {
-            console.log('form valid');
-        } else {
-            console.log('form invalid');
-        }
+        formIsValid && sendData();
+    });
 
-        // formIsValid && sendData();
+    /* Listen for submit */
+    inputsToValidate.forEach((input) => {
+        input.addEventListener('blur', event => validateInput(input));
     });
 
     /**
@@ -41,29 +39,33 @@ const formValidation = (container) => {
         return true;
     }
 
-    function validateInputs() {
+    function validateInputs(inputs) {
+        inputs.forEach(input => validateInput(input));
+    }
+
+    /**
+     * @param  {HTML element} input
+     */
+    function validateInput(input) {
         formIsValid = true;
+        const formatIsValid = isFormatValid(input);
+        const parentElement = input.parentElement;
+        const feedback = parentElement.querySelector('.form-control-feedback');
+        const formatInvalidMessage = input.dataset.validationMessageFormatInvalid;
 
-        inputsToValidate.forEach((input) => {
-            const formatIsValid = isFormatValid(input);
-            const parentElement = input.parentElement;
-            const feedback = parentElement.querySelector('.form-control-feedback');
-            const formatInvalidMessage = input.dataset.validationMessageFormatInvalid;
+        if (formatIsValid) {
+            parentElement.classList.add(hasSuccessClassName);
+            parentElement.classList.remove(hasDangerClassName);
+            feedback.innerText = '';
+        } else {
+            parentElement.classList.remove(hasSuccessClassName);
+            parentElement.classList.add(hasDangerClassName);
+            feedback.innerText = formatInvalidMessage;
+        }
 
-            if (formatIsValid) {
-                parentElement.classList.add(hasSuccessClassName);
-                parentElement.classList.remove(hasDangerClassName);
-                feedback.innerText = '';
-            } else {
-                parentElement.classList.remove(hasSuccessClassName);
-                parentElement.classList.add(hasDangerClassName);
-                feedback.innerText = formatInvalidMessage;
-            }
-
-            if (!formatIsValid) {
-                formIsValid = false;
-            }
-        });
+        if (!formatIsValid) {
+            formIsValid = false;
+        }
     }
 
     /**
