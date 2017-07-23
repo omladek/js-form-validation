@@ -91,8 +91,9 @@ const formValidation = (container) => {
                     isValid = isValidInput(input, /^\s*\S.*$/);
                     break;
                 case 'checkbox':
-                    isValid = isValidInput(input, /^\s*\S.*$/);
+                    isValid = isValidCheckbox(input);
                     break;
+                /* Probably not needed: select the first by default in HTML */
                 case 'radio':
                     isValid = isValidInput(input, /^\s*\S.*$/);
                     break;
@@ -121,6 +122,14 @@ const formValidation = (container) => {
     }
 
     /**
+     * @param  {HTML element}  input
+     * @return {Boolean}
+     */
+    function isValidCheckbox(input) {
+        return input.checked;
+    }
+
+    /**
      * Don't allow empty value of select element
      * @param  {HTML element}  input
      * @return {Boolean}
@@ -133,7 +142,7 @@ const formValidation = (container) => {
      * @param  {HTML element} input
      */
     function handleValid(input) {
-        const parentElement = input.parentElement;
+        const parentElement = getAncestor(input, '.form-group');
         const feedback = parentElement.querySelector('.form-control-feedback');
 
         parentElement.classList.add(hasSuccessClassName);
@@ -146,7 +155,7 @@ const formValidation = (container) => {
      * @param  {string} message
      */
     function handleInvalid(input, message) {
-        const parentElement = input.parentElement;
+        const parentElement = getAncestor(input, '.form-group');
         const feedback = parentElement.querySelector('.form-control-feedback');
 
         parentElement.classList.remove(hasSuccessClassName);
@@ -163,6 +172,17 @@ const formValidation = (container) => {
      */
     function isValidInput(input, rule) {
         return rule.test(input.value);
+    }
+
+    /**
+     * TODO: IE11 compatibility
+     *
+     * @param  {HTML element} element
+     * @param  {string} selector
+     * @return {HTML element}
+     */
+    function getAncestor(element, selector) {
+        return element.closest(selector);
     }
 };
 
