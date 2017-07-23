@@ -24,7 +24,7 @@ const formValidation = (container) => {
     const hasDangerClassName = 'has-danger';
 
     /* State */
-    const formState = {
+    const state = {
         invalidFields: [],
         sent: false
     };
@@ -35,7 +35,7 @@ const formValidation = (container) => {
 
         validateAll(inputsToValidate);
 
-        (formState.invalidFields.length === 0 && !formState.sent) && sendData();
+        (state.invalidFields.length === 0 && !state.sent) && sendData();
     });
 
     /* Listen for blur */
@@ -45,14 +45,11 @@ const formValidation = (container) => {
 
     /**
      * Send data
-     *
-     * TODO: fetch a mockup.
      */
     function sendData() {
-        const api = 'api/form.json';
         const query = getData();
         const serviceUrl = url.format({
-            pathname: api,
+            pathname: form.dataset.api,
             query
         });
 
@@ -63,6 +60,11 @@ const formValidation = (container) => {
             .catch(error => handleError(error));
     }
 
+    /**
+     * Collect form data
+     *
+     * @return {object}
+     */
     function getData() {
         const data = {};
 
@@ -77,26 +79,28 @@ const formValidation = (container) => {
      * @param  {object} data
      */
     function handleSuccess(data) {
-        const html = document.createDocumentFragment();
-        const content = document.createElement('p');
-        content.textContent = data.message;
-        html.appendChild(content);
-        form.appendChild(html);
+        setFormMessage(data.message);
 
-        formState.sent = true;
+        /* Update state */
+        state.sent = true;
     }
 
     /**
      * @param  {string} error
      */
     function handleError(error) {
+        setFormMessage(error);
+    }
+
+    /**
+     * @param {string} message
+     */
+    function setFormMessage(message) {
         const html = document.createDocumentFragment();
         const content = document.createElement('p');
-        content.textContent = error;
+        content.textContent = message;
         html.appendChild(content);
         form.appendChild(html);
-
-        formState.sent = true;
     }
 
     /**
@@ -117,17 +121,6 @@ const formValidation = (container) => {
             handleValid(input);
         } else {
             handleInvalid(input, validation.message);
-        }
-
-        /* Update state */
-        if (validation.isValid) {
-            const index = formState.invalidFields.indexOf(input.name);
-
-            if (index !== -1) {
-                formState.invalidFields.splice(index, 1);
-            }
-        } else {
-            formState.invalidFields.push(input.name);
         }
     }
 
@@ -191,8 +184,9 @@ const formValidation = (container) => {
 
     /**
      * Don't allow empty value of select element
+     *
      * @param  {HTML element}  input
-     * @return {Boolean}
+     * @return {null/string}
      */
     function isValidSelect(input) {
         return input[input.selectedIndex].getAttribute('value');
@@ -205,9 +199,17 @@ const formValidation = (container) => {
         const parentElement = getAncestor(input, '.form-group');
         const feedback = parentElement.querySelector('.form-control-feedback');
 
+        /* Update state - remove from invalid fields */
+        const index = state.invalidFields.indexOf(input.name);
+
+        if (index !== -1) {
+            state.invalidFields.splice(index, 1);
+        }
+
+        /* Update UI */
         parentElement.classList.add(hasSuccessClassName);
         parentElement.classList.remove(hasDangerClassName);
-        feedback.innerText = '';
+        setValidationMessage(feedback);
     }
 
     /**
@@ -218,9 +220,21 @@ const formValidation = (container) => {
         const parentElement = getAncestor(input, '.form-group');
         const feedback = parentElement.querySelector('.form-control-feedback');
 
+        /* Update state */
+        state.invalidFields.push(input.name);
+
+        /* Update UI */
         parentElement.classList.remove(hasSuccessClassName);
         parentElement.classList.add(hasDangerClassName);
-        feedback.innerText = message;
+        setValidationMessage(feedback, message);
+    }
+
+    /**
+     * @param {HTML element} element
+     * @param {String} message
+     */
+    function setValidationMessage(element, message = '') {
+        element.innerText = message;
     }
 
     /**
