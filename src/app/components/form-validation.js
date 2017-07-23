@@ -24,7 +24,10 @@ const formValidation = (container) => {
     const hasDangerClassName = 'has-danger';
 
     /* State */
-    let formIsValid = false;
+    const formState = {
+        invalidFields: [],
+        sent: false
+    };
 
     /* Listen for submit */
     form.addEventListener('submit', (event) => {
@@ -32,7 +35,7 @@ const formValidation = (container) => {
 
         validateAll(inputsToValidate);
 
-        formIsValid && sendData();
+        (formState.invalidFields.length === 0 && !formState.sent) && sendData();
     });
 
     /* Listen for blur */
@@ -79,6 +82,8 @@ const formValidation = (container) => {
         content.textContent = data.message;
         html.appendChild(content);
         form.appendChild(html);
+
+        formState.sent = true;
     }
 
     /**
@@ -90,6 +95,8 @@ const formValidation = (container) => {
         content.textContent = error;
         html.appendChild(content);
         form.appendChild(html);
+
+        formState.sent = true;
     }
 
     /**
@@ -103,7 +110,6 @@ const formValidation = (container) => {
      * @param  {HTML element} input
      */
     function validate(input) {
-        formIsValid = true;
         const validation = handleValidation(input);
 
         /* Show/hide validation message */
@@ -113,9 +119,15 @@ const formValidation = (container) => {
             handleInvalid(input, validation.message);
         }
 
-        /* Update form state */
-        if (!validation.isValid) {
-            formIsValid = false;
+        /* Update state */
+        if (validation.isValid) {
+            const index = formState.invalidFields.indexOf(input.name);
+
+            if (index !== -1) {
+                formState.invalidFields.splice(index, 1);
+            }
+        } else {
+            formState.invalidFields.push(input.name);
         }
     }
 

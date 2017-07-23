@@ -9,7 +9,6 @@
     <div class="form-group">
         <label class="form-control-label" for="exampleInputNumber">Number</label>
         <input type="text" class="form-control" name="exampleInputNumber" id="exampleInputNumber" placeholder="Enter number (123456)" data-validation-format="^\d+$" data-validation-message-format-invalid="Incorrect format - not a number">
-        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
         <div class="form-control-feedback"></div>
     </div>
     <div class="form-group">
