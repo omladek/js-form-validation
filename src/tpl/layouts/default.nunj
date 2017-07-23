@@ -42,8 +42,6 @@
     {% endif %}
 </head>
 <body>
-    {% include "../components/cookie-law.nunj" %}
-
     {# Main content of the page #}
     <main>
         <div class="container">
