@@ -1,3 +1,5 @@
+import url from 'url';
+
 /**
  * rules:
  *
@@ -44,9 +46,55 @@ const formValidation = (container) => {
      * TODO: fetch a mockup.
      */
     function sendData() {
-        return true;
+        const api = 'api/form.json';
+        const query = getData();
+        const serviceUrl = url.format({
+            pathname: api,
+            query
+        });
+
+        /* Request */
+        fetch(serviceUrl)
+            .then(response => response.json())
+            .then(data => handleSuccess(data))
+            .catch(error => handleError(error));
     }
 
+    function getData() {
+        const data = {};
+
+        Array.from(form.querySelectorAll('input, textarea, select')).forEach((input) => {
+            data[input.name] = input.value;
+        });
+
+        return data;
+    }
+
+    /**
+     * @param  {object} data
+     */
+    function handleSuccess(data) {
+        const html = document.createDocumentFragment();
+        const content = document.createElement('p');
+        content.textContent = data.message;
+        html.appendChild(content);
+        form.appendChild(html);
+    }
+
+    /**
+     * @param  {string} error
+     */
+    function handleError(error) {
+        const html = document.createDocumentFragment();
+        const content = document.createElement('p');
+        content.textContent = error;
+        html.appendChild(content);
+        form.appendChild(html);
+    }
+
+    /**
+     * @param  {array} inputs
+     */
     function validateAll(inputs) {
         inputs.forEach(input => validate(input));
     }
